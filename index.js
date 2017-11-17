@@ -10,9 +10,11 @@ program
  * Add a translation
  */
 program
-  .command(AddTranslation.command)
-  .alias(AddTranslation.alias)
-  .description(AddTranslation.description)
-  .action(AddTranslation.handle)
+  .command('add <key>')
+  .alias('a')
+  .description('Add a translation')
+  .action(AddTranslation)
+  .option('-l, --locales <locales>', 'Comma-spearated list of supported locales')
+  .option('-o, --output-dir <output-dir>', 'Path to folder with json translation files')
 
 program.parse(process.argv)

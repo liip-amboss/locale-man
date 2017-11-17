@@ -1,18 +1,12 @@
 const { prompt } = require('inquirer')
 const program = require('commander')
 const fs = require('fs')
+const path = require('path')
 const chalk = require('chalk')
 const set = require('lodash.set')
 
-const path = require('path')
-const appDir = path.dirname(require.main.filename)
-const getFileFromProject = path => {
-  return appDir + '/' + path
-}
-
 const { printError } = require('../utils')
 
-const config = require(getFileFromProject('config'))
 const jsonFile = require('jsonfile')
 
 /**
@@ -20,11 +14,12 @@ const jsonFile = require('jsonfile')
  * @param  {String} locale       e.g. 'de'
  * @param  {String} key          e.g 'page.dashboard.title'
  * @param  {String} translation  The translation for <key>
+ * @param  {String} dir          Directory to write files to
  * @return {Promise}
  */
-const writeTranslationsToDisk = ({ locale, key, translation }) => {
+const writeTranslationsToDisk = ({ locale, key, translation, dir }) => {
   return new Promise((resolve, reject) => {
-    let translationFile = getFileFromProject(`${config.localeDir}/${locale}.json`)
+    let translationFile = `${dir}/${locale}.json`
     jsonFile.readFile(translationFile, (err, obj) => {
       obj = obj || {}
       // this will transform dot notation
@@ -38,10 +33,23 @@ const writeTranslationsToDisk = ({ locale, key, translation }) => {
 /**
  * Handle add local command
  * @param  {String} key Translation key
+ * @param  {Object} options CLI options
  */
-const handle = key => {
+const handle = (key, options) => {
+  if (!options.locales) {
+    printError('Missing option "locales" (e.g. --locales de,fr)')
+    process.exit(1)
+  }
+
+  if (!options.outputDir) {
+    printError('Missing option "--output-dir" (e.g. --output-dir src/locale/)')
+    process.exit(1)
+  }
+
+  const locales = options.locales.split(',')
+
   // generate a prompt object for each translation we want
-  const questions = config.supportedLocales.map(locale => ({
+  const questions = locales.map(locale => ({
     type: 'input',
     name: locale,
     message: `Enter translation for ${locale}:`
@@ -51,11 +59,12 @@ const handle = key => {
   prompt(questions).then(answers => {
     const writeOperations = []
     // handle each locale
-    config.supportedLocales.forEach(locale => {
+    locales.forEach(locale => {
       let payload = {
         key,
         locale,
-        translation: answers[locale]
+        translation: answers[locale],
+        dir: path.resolve(process.cwd(), options.outputDir)
       }
       writeOperations.push(writeTranslationsToDisk(payload))
     })
@@ -68,12 +77,4 @@ const handle = key => {
   .catch(printError)
 }
 
-/**
- * Command interface for commander.js
- */
-module.exports = {
-  alias: 'a',
-  command: 'add <key>',
-  description: 'Add a translation',
-  handle
-}
+module.exports = handle
