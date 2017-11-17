@@ -1,11 +1,10 @@
-# 👮 locale-man
+# locale-man 👮
 Interactive translation manager for node
 
-This node script makes managing translations easier. It's not tied a specific translation library but we use it with [vuex-i18n](https://github.com/dkfbasel/vuex-i18n).
+This node script makes managing translations easier. It's not tied to a specific translation library but we use it with [vuex-i18n](https://github.com/dkfbasel/vuex-i18n).
 
 ## Install
 
-Install it:
 ```
 npm install locale-man
 ```
@@ -33,4 +32,21 @@ $ npm run add-translation page.welcome.title
 Translation files were updated
 ```
 
-Done. The translations were added to `src/locales/<locale>.json`. The dot notation (`page.welcome.title`) is automatically expanded to an object.
+Done. The translations should automatically be added to `src/locales/<locale>.json`:
+
+```
+{
+  "page": {
+    "welcome": {
+      "title": "Willkommen"
+    }
+  }
+}
+```
+
+Note that the dot notation (`page.welcome.title`) is automatically expanded to an object.
+
+## Todo
+
+* Write unit tests
+* Add more commands e.g. syncing with translation services
