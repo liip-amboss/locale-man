@@ -31,7 +31,8 @@ Let's add the key `page.welcome.title` for all our supported locales:
 $ npm run add-translation page.welcome.title
 ? Enter translation for de: Willkommen
 ? Enter translation for en: Welcome
-Translation files were updated
+Translation files were updated. You can use it like this:
+{{ 'page.welcome.title' }}
 ```
 
 Done. The translations should automatically be added to `src/locales/<locale>.json`:
