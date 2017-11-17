@@ -73,7 +73,7 @@ const handle = (key, options) => {
     Promise.all(writeOperations)
       .then(() => {
         console.log(chalk.green('Translation files were updated. You can use it like this:'))
-        console.log(chalk.black(chalk.bgCyan(`{{ '${key}' }}`))) 
+        console.log(chalk.black(chalk.bgCyan(`{{ $t('${key}') }}`))) 
       })
       .catch(printError)
   })

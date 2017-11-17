@@ -1,6 +1,6 @@
 {
   "name": "locale-man",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Interactive translation manager for node",
   "main": "index.js",
   "scripts": {
