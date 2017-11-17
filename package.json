@@ -1,0 +1,33 @@
+{
+  "name": "locale-man",
+  "version": "0.0.1",
+  "description": "Interactive translation manager for node",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/liip-amboss/locale-man.git"
+  },
+  "keywords": [
+    "i18n",
+    "node",
+    "translation",
+    "vuex-i18n",
+    "vue-18n"
+  ],
+  "author": "liip-amboss",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/liip-amboss/locale-man/issues"
+  },
+  "homepage": "https://github.com/liip-amboss/locale-man#readme",
+  "dependencies": {
+    "chalk": "^2.3.0",
+    "commander": "^2.11.0",
+    "inquirer": "^4.0.0",
+    "jsonfile": "^4.0.0",
+    "lodash.set": "^4.3.2"
+  }
+}
