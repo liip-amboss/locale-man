@@ -1,14 +1,14 @@
 # locale-man 👮
-Interactive translation manager for node
-
 [![npm version](https://badge.fury.io/js/locale-man.svg)](https://badge.fury.io/js/locale-man)
+
+Interactive translation manager for node
 
 This node script makes managing translations easier. It's not tied to a specific translation library but we use it with [vuex-i18n](https://github.com/dkfbasel/vuex-i18n).
 
 ## Install
 
 ```
-npm install locale-man
+npm install --save-dev locale-man
 ```
 
 Add a script to your `package.json` scripts for your convenience. Here's an example if you're using German and English and keep your locale files at `src/locale/`:
