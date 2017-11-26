@@ -1,5 +1,6 @@
 # locale-man 👮
 [![npm version](https://badge.fury.io/js/locale-man.svg)](https://badge.fury.io/js/locale-man)
+[![Build Status](https://travis-ci.org/liip-amboss/locale-man.svg?branch=master)](https://travis-ci.org/liip-amboss/locale-man)
 
 Interactive translation manager for node
 
@@ -51,5 +52,7 @@ Note that the dot notation (`page.welcome.title`) is automatically expanded to a
 
 ## Todo
 
-* Write unit tests
-* Add more commands e.g. syncing with translation services
+* Add more commands:
+  * bulk-add mode
+  * edit mode
+  * syncing with translation services
