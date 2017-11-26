@@ -13,7 +13,7 @@ describe('AddTranslation', () => {
   utils.writeTranslationsToDisk = jest.fn()
 
   test('Locales are prompted for', () => {
-    const askForTranslations = require('../AddTranslation')
+    const { askForTranslations } = require('../AddTranslation')
     askForTranslations('test', {
       locales: 'de,en',
       outputDir: './out'
@@ -27,7 +27,7 @@ describe('AddTranslation', () => {
   })
 
   test('Translations are assembled correctly', () => {
-    const askForTranslations = require('../AddTranslation')
+    const { askForTranslations } = require('../AddTranslation')
     askForTranslations('test', {
       locales: 'de,en',
       outputDir: './out'

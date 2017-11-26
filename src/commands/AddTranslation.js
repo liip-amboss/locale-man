@@ -71,4 +71,7 @@ const handle = (key, options) => {
     .catch(handleError)
 }
 
-module.exports = handle
+module.exports = {
+  handle,
+  askForTranslations
+}
