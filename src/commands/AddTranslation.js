@@ -1,6 +1,4 @@
 const { prompt } = require('inquirer')
-const program = require('commander')
-const fs = require('fs')
 const path = require('path')
 const chalk = require('chalk')
 const set = require('lodash.set')
@@ -20,7 +18,8 @@ const jsonFile = require('jsonfile')
 const writeTranslationsToDisk = ({ locale, key, translation, dir }) => {
   return new Promise((resolve, reject) => {
     let translationFile = `${dir}/${locale}.json`
-    jsonFile.readFile(translationFile, (err, obj) => {
+    jsonFile.readFile(translationFile, (e, obj) => {
+      /* eslint-disable no-irregular-whitespace */
       obj = obj || {}
       // this will transform dot notation
       set(obj, key, translation)
@@ -73,11 +72,11 @@ const handle = (key, options) => {
     Promise.all(writeOperations)
       .then(() => {
         console.log(chalk.green('Translation files were updated. You can use it like this:'))
-        console.log(chalk.black(chalk.bgCyan(`{{ $t('${key}') }}`))) 
+        console.log(chalk.black(chalk.bgCyan(`{{ $t('${key}') }}`)))
       })
       .catch(printError)
   })
-  .catch(printError)
+    .catch(printError)
 }
 
 module.exports = handle
