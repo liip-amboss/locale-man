@@ -1,33 +1,7 @@
 const { prompt } = require('inquirer')
-const path = require('path')
 const chalk = require('chalk')
-const set = require('lodash.set')
 
-const { printError } = require('../utils')
-
-const jsonFile = require('jsonfile')
-
-/**
- * Write a translation to it's corresponding file
- * @param  {String} locale       e.g. 'de'
- * @param  {String} key          e.g 'page.dashboard.title'
- * @param  {String} translation  The translation for <key>
- * @param  {String} dir          Directory to write files to
- * @return {Promise}
- */
-const writeTranslationsToDisk = ({ locale, key, translation, dir }) => {
-  return new Promise((resolve, reject) => {
-    let translationFile = `${dir}/${locale}.json`
-    jsonFile.readFile(translationFile, (e, obj) => {
-      /* eslint-disable no-irregular-whitespace */
-      obj = obj || {}
-      // this will transform dot notation
-      set(obj, key, translation)
-      jsonFile.writeFile(translationFile, obj, { spaces: 4 }, err => { reject(err) })
-      resolve()
-    })
-  })
-}
+const { printError, writeTranslationsToDisk, resolve } = require('../utils')
 
 /**
  * Handle add local command
@@ -44,6 +18,8 @@ const handle = (key, options) => {
     printError('Missing option "--output-dir" (e.g. --output-dir src/locale/)')
     process.exit(1)
   }
+
+  const handleError = e => { if (!options.silent) { printError(e) } }
 
   const locales = options.locales.split(',')
 
@@ -63,7 +39,7 @@ const handle = (key, options) => {
         key,
         locale,
         translation: answers[locale],
-        dir: path.resolve(process.cwd(), options.outputDir)
+        dir: resolve(options.outputDir)
       }
       writeOperations.push(writeTranslationsToDisk(payload))
     })
@@ -71,12 +47,14 @@ const handle = (key, options) => {
     // when all translation files are updated
     Promise.all(writeOperations)
       .then(() => {
-        console.log(chalk.green('Translation files were updated. You can use it like this:'))
-        console.log(chalk.black(chalk.bgCyan(`{{ $t('${key}') }}`)))
+        if (!options.silent) {
+          console.log(chalk.green('Translation files were updated. You can use it like this:'))
+          console.log(chalk.black(chalk.bgCyan(`{{ $t('${key}') }}`)))
+        }
       })
-      .catch(printError)
+      .catch(handleError)
   })
-    .catch(printError)
+    .catch(handleError)
 }
 
 module.exports = handle

@@ -1,18 +1,23 @@
 describe('AddTranslation', () => {
-  test('Locales are prompted for', () => {
-    // mock inquirer
-    const inquirer = require('inquirer')
-    const mockPrompt = jest.fn()
-    const answers = [{ de: 'Eins', en: 'One' }]
-    mockPrompt.mockImplementation(() => {
-      return Promise.resolve(answers)
-    })
-    inquirer.prompt = mockPrompt
+  // mock inquirer
+  const inquirer = require('inquirer')
+  const mockPrompt = jest.fn()
+  const answers = { de: 'Eins', en: 'One' }
+  mockPrompt.mockImplementation(() => {
+    return Promise.resolve(answers)
+  })
+  inquirer.prompt = mockPrompt
 
+  // mock write-translations utility
+  const utils = require('../../utils')
+  utils.writeTranslationsToDisk = jest.fn()
+
+  test('Locales are prompted for', () => {
     const handle = require('../AddTranslation')
     handle('test', {
       locales: 'de,en',
-      outputDir: './out'
+      outputDir: './out',
+      silent: true
     })
 
     const exptectedPrompt = [
@@ -20,5 +25,23 @@ describe('AddTranslation', () => {
       {'message': 'Enter translation for en:', 'name': 'en', 'type': 'input'}
     ]
     expect(mockPrompt).toHaveBeenCalledWith(exptectedPrompt)
+  })
+
+  test('Translations are written correctly', () => {
+    const handle = require('../AddTranslation')
+    handle('test', {
+      locales: 'de,en',
+      outputDir: './out',
+      silent: true
+    })
+
+    // for each locale..
+    expect(utils.writeTranslationsToDisk).toHaveBeenCalledTimes(2)
+    expect(utils.writeTranslationsToDisk).toHaveBeenLastCalledWith({
+      locale: 'en',
+      key: 'test',
+      translation: 'One',
+      dir: utils.resolve('./out')
+    })
   })
 })

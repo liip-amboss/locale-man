@@ -16,5 +16,6 @@ program
   .action(AddTranslation)
   .option('-l, --locales <locales>', 'Comma-spearated list of supported locales')
   .option('-o, --output-dir <output-dir>', 'Path to folder with json translation files')
+  .option('-s, --silent', 'Silent mode (no output)')
 
 program.parse(process.argv)
