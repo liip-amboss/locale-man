@@ -16,7 +16,7 @@ const printError = e => {
  * @param  {String} path Relative path to be resolved
  * @return {String}      Absolute path
  */
-const resolve = relPath => path.resolve(process.cwd(), relPath)
+const pathResolve = relPath => path.resolve(process.cwd(), relPath)
 
 /**
  * Write a translation to it's corresponding file
@@ -43,5 +43,5 @@ const writeTranslationsToDisk = ({ locale, key, translation, dir }) => {
 module.exports = {
   printError,
   writeTranslationsToDisk,
-  resolve
+  pathResolve
 }

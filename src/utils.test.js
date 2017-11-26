@@ -3,8 +3,8 @@ describe('Utils', () => {
     // override process.cwd
     process.cwd = () => '/absolute/path'
 
-    const { resolve } = require('./utils')
-    expect(resolve('relative/path')).toBe('/absolute/path/relative/path')
+    const { pathResolve } = require('./utils')
+    expect(pathResolve('relative/path')).toBe('/absolute/path/relative/path')
   })
 
   test('Translations are written correctly', () => {
