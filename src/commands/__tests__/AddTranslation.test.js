@@ -13,11 +13,10 @@ describe('AddTranslation', () => {
   utils.writeTranslationsToDisk = jest.fn()
 
   test('Locales are prompted for', () => {
-    const handle = require('../AddTranslation')
-    handle('test', {
+    const askForTranslations = require('../AddTranslation')
+    askForTranslations('test', {
       locales: 'de,en',
-      outputDir: './out',
-      silent: true
+      outputDir: './out'
     })
 
     const exptectedPrompt = [
@@ -28,11 +27,10 @@ describe('AddTranslation', () => {
   })
 
   test('Translations are assembled correctly', () => {
-    const handle = require('../AddTranslation')
-    handle('test', {
+    const askForTranslations = require('../AddTranslation')
+    askForTranslations('test', {
       locales: 'de,en',
-      outputDir: './out',
-      silent: true
+      outputDir: './out'
     })
 
     // for each locale..
@@ -41,7 +39,7 @@ describe('AddTranslation', () => {
       locale: 'en',
       key: 'test',
       translation: 'One',
-      dir: utils.resolve('./out')
+      dir: utils.pathResolve('./out')
     })
   })
 })

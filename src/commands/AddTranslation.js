@@ -1,14 +1,15 @@
 const { prompt } = require('inquirer')
 const chalk = require('chalk')
 
-const { printError, writeTranslationsToDisk, resolve } = require('../utils')
+const { printError, writeTranslationsToDisk, pathResolve } = require('../utils')
 
 /**
- * Handle add local command
+ * Prompt the user for translations in each locale
  * @param  {String} key Translation key
  * @param  {Object} options CLI options
+ * @return {Promise}
  */
-const handle = (key, options) => {
+const askForTranslations = (key, options) => {
   if (!options.locales) {
     printError('Missing option "locales" (e.g. --locales de,fr)')
     process.exit(1)
@@ -19,8 +20,6 @@ const handle = (key, options) => {
     process.exit(1)
   }
 
-  const handleError = e => { if (!options.silent) { printError(e) } }
-
   const locales = options.locales.split(',')
 
   // generate a prompt object for each translation we want
@@ -30,30 +29,45 @@ const handle = (key, options) => {
     message: `Enter translation for ${locale}:`
   }))
 
-  // ask for translation in each language
-  prompt(questions).then(answers => {
-    const writeOperations = []
-    // handle each locale
-    locales.forEach(locale => {
-      let payload = {
-        key,
-        locale,
-        translation: answers[locale],
-        dir: resolve(options.outputDir)
-      }
-      writeOperations.push(writeTranslationsToDisk(payload))
-    })
-
-    // when all translation files are updated
-    Promise.all(writeOperations)
-      .then(() => {
-        if (!options.silent) {
-          console.log(chalk.green('Translation files were updated. You can use it like this:'))
-          console.log(chalk.black(chalk.bgCyan(`{{ $t('${key}') }}`)))
+  return new Promise((resolve, reject) => {
+    // ask for translation in each language
+    prompt(questions).then(answers => {
+      const writeOperations = []
+      // handle each locale
+      locales.forEach(locale => {
+        let payload = {
+          key,
+          locale,
+          translation: answers[locale],
+          dir: pathResolve(options.outputDir)
         }
+        writeOperations.push(writeTranslationsToDisk(payload))
       })
-      .catch(handleError)
+
+      // when all translation files are updated
+      Promise.all(writeOperations)
+        .then(resolve)
+        .catch(reject)
+    })
+      .catch(reject)
   })
+}
+
+/**
+ * Handle add local command
+ * @param  {String} key Translation key
+ * @param  {Object} options CLI options
+ */
+const handle = (key, options) => {
+  const handleError = e => { if (!options.silent) { printError(e) } }
+
+  askForTranslations(key, options)
+    .then(() => {
+      if (!options.silent) {
+        console.log(chalk.green('Translation files were updated. You can use it like this:'))
+        console.log(chalk.black(chalk.bgCyan(`{{ $t('${key}') }}`)))
+      }
+    })
     .catch(handleError)
 }
 
