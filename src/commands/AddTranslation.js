@@ -1,41 +1,15 @@
 const { prompt } = require('inquirer')
-const program = require('commander')
-const fs = require('fs')
-const path = require('path')
 const chalk = require('chalk')
-const set = require('lodash.set')
 
-const { printError } = require('../utils')
-
-const jsonFile = require('jsonfile')
+const { printError, writeTranslationsToDisk, pathResolve } = require('../utils')
 
 /**
- * Write a translation to it's corresponding file
- * @param  {String} locale       e.g. 'de'
- * @param  {String} key          e.g 'page.dashboard.title'
- * @param  {String} translation  The translation for <key>
- * @param  {String} dir          Directory to write files to
- * @return {Promise}
- */
-const writeTranslationsToDisk = ({ locale, key, translation, dir }) => {
-  return new Promise((resolve, reject) => {
-    let translationFile = `${dir}/${locale}.json`
-    jsonFile.readFile(translationFile, (err, obj) => {
-      obj = obj || {}
-      // this will transform dot notation
-      set(obj, key, translation)
-      jsonFile.writeFile(translationFile, obj, { spaces: 4 }, err => { reject(err) })
-      resolve()
-    })
-  })
-}
-
-/**
- * Handle add local command
+ * Prompt the user for translations in each locale
  * @param  {String} key Translation key
  * @param  {Object} options CLI options
+ * @return {Promise}
  */
-const handle = (key, options) => {
+const askForTranslations = async (key, options) => {
   if (!options.locales) {
     printError('Missing option "locales" (e.g. --locales de,fr)')
     process.exit(1)
@@ -56,28 +30,34 @@ const handle = (key, options) => {
   }))
 
   // ask for translation in each language
-  prompt(questions).then(answers => {
-    const writeOperations = []
-    // handle each locale
-    locales.forEach(locale => {
-      let payload = {
-        key,
-        locale,
-        translation: answers[locale],
-        dir: path.resolve(process.cwd(), options.outputDir)
-      }
-      writeOperations.push(writeTranslationsToDisk(payload))
-    })
+  const answers = await prompt(questions)
 
-    // when all translation files are updated
-    Promise.all(writeOperations)
-      .then(() => {
-        console.log(chalk.green('Translation files were updated. You can use it like this:'))
-        console.log(chalk.black(chalk.bgCyan(`{{ $t('${key}') }}`))) 
-      })
-      .catch(printError)
-  })
-  .catch(printError)
+  // handle each locale
+  for (let locale of locales) {
+    let payload = {
+      key,
+      locale,
+      translation: answers[locale],
+      dir: pathResolve(options.outputDir)
+    }
+    await writeTranslationsToDisk(payload)
+  }
 }
 
-module.exports = handle
+/**
+ * Handle add local command
+ * @param  {String} key Translation key
+ * @param  {Object} options CLI options
+ */
+const handle = async (key, options) => {
+  await askForTranslations(key, options)
+  if (!options.silent) {
+    console.log(chalk.green('Translation files were updated. You can use it like this:'))
+    console.log(chalk.black(chalk.bgCyan(`{{ $t('${key}') }}`)))
+  }
+}
+
+module.exports = {
+  handle,
+  askForTranslations
+}
