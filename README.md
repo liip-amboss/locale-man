@@ -16,27 +16,29 @@ Add a script to your `package.json` scripts for your convenience. Here's an exam
 ```
 "scripts": {
   // ...
-  "add-translation": "node node_modules/locale-man/ add -l de,en -o src/locale"
+  "locale-man": "node node_modules/locale-man/ -l de,en -o src/locale"
 }
 ```
 
-## Usage
+## Commands
 
-### Add a translation
+This is assuming you added the script to your `package.json` as described above.
 
-(This is assuming you added the `add-translation` script to your `package.json`)
+### add-translation
+
+Adds a single new translation key with translations for all locales.
 
 Let's add the key `page.welcome.title` for all our supported locales:
 
 ```
-$ npm run add-translation page.welcome.title
+$ npm run locale-man add page.welcome.title
 ? Enter translation for de: Willkommen
 ? Enter translation for en: Welcome
 Translation files were updated. You can use it like this:
 {{ $t('page.welcome.title') }}
 ```
 
-Done. The translations should automatically be added to `src/locales/<locale>.json`:
+Done. The translations are automatically be added to `src/locales/<locale>.json`:
 
 ```
 {
@@ -50,9 +52,27 @@ Done. The translations should automatically be added to `src/locales/<locale>.js
 
 Note that the dot notation (`page.welcome.title`) is automatically expanded to an object.
 
+### bulk-add
+
+Same as `add-translation` but with the possibility to keep adding new translation keys and translations until you are finished.
+
+```
+npm run locale-man bulk-add
+? Enter the new translation key: nav.home
+? Enter translation for de: Startseite
+? What do you want to do? Add another
+? Enter the new translation key: nav.profile
+? Enter translation for de: Profil
+? What do you want to do?
+  Add another
+❯ Finish
+Translation files were updated. The following texts were added:
+{{ $t('nav.home') }}
+{{ $t('nav.profile') }}
+```
+
 ## Todo
 
 * Add more commands:
-  * bulk-add mode
   * edit mode
   * syncing with translation services
