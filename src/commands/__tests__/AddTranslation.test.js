@@ -27,7 +27,7 @@ describe('AddTranslation', () => {
     expect(mockPrompt).toHaveBeenCalledWith(exptectedPrompt)
   })
 
-  test('Translations are written correctly', () => {
+  test('Translations are assembled correctly', () => {
     const handle = require('../AddTranslation')
     handle('test', {
       locales: 'de,en',
