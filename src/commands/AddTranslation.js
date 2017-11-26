@@ -9,7 +9,7 @@ const { printError, writeTranslationsToDisk, pathResolve } = require('../utils')
  * @param  {Object} options CLI options
  * @return {Promise}
  */
-const askForTranslations = (key, options) => {
+const askForTranslations = async (key, options) => {
   if (!options.locales) {
     printError('Missing option "locales" (e.g. --locales de,fr)')
     process.exit(1)
@@ -29,28 +29,19 @@ const askForTranslations = (key, options) => {
     message: `Enter translation for ${locale}:`
   }))
 
-  return new Promise((resolve, reject) => {
-    // ask for translation in each language
-    prompt(questions).then(answers => {
-      const writeOperations = []
-      // handle each locale
-      locales.forEach(locale => {
-        let payload = {
-          key,
-          locale,
-          translation: answers[locale],
-          dir: pathResolve(options.outputDir)
-        }
-        writeOperations.push(writeTranslationsToDisk(payload))
-      })
+  // ask for translation in each language
+  const answers = await prompt(questions)
 
-      // when all translation files are updated
-      Promise.all(writeOperations)
-        .then(resolve)
-        .catch(reject)
-    })
-      .catch(reject)
-  })
+  // handle each locale
+  for (let locale of locales) {
+    let payload = {
+      key,
+      locale,
+      translation: answers[locale],
+      dir: pathResolve(options.outputDir)
+    }
+    await writeTranslationsToDisk(payload)
+  }
 }
 
 /**
@@ -58,17 +49,12 @@ const askForTranslations = (key, options) => {
  * @param  {String} key Translation key
  * @param  {Object} options CLI options
  */
-const handle = (key, options) => {
-  const handleError = e => { if (!options.silent) { printError(e) } }
-
-  askForTranslations(key, options)
-    .then(() => {
-      if (!options.silent) {
-        console.log(chalk.green('Translation files were updated. You can use it like this:'))
-        console.log(chalk.black(chalk.bgCyan(`{{ $t('${key}') }}`)))
-      }
-    })
-    .catch(handleError)
+const handle = async (key, options) => {
+  await askForTranslations(key, options)
+  if (!options.silent) {
+    console.log(chalk.green('Translation files were updated. You can use it like this:'))
+    console.log(chalk.black(chalk.bgCyan(`{{ $t('${key}') }}`)))
+  }
 }
 
 module.exports = {
