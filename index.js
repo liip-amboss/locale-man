@@ -24,7 +24,7 @@ const wrapWithErrorHandler = (command, ...args) => {
 }
 
 program
-  .version('0.0.1')
+  .version('0.0.5')
   .description('locale-man 👮: Interactive translation manager for node')
 
 /**
