@@ -74,5 +74,7 @@ Translation files were updated. The following texts were added:
 ## Todo
 
 * Add more commands:
+  * remove translation
+  * find missing translations
   * edit mode
   * syncing with translation services
