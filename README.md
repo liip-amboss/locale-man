@@ -73,6 +73,7 @@ Translation files were updated. The following texts were added:
 
 ## Todo
 
+* Pressing up in bulk-add mode should fill in previous translation key
 * Add more commands:
   * remove translation
   * find missing translations
