@@ -38,7 +38,7 @@ Translation files were updated. You can use it like this:
 {{ $t('page.welcome.title') }}
 ```
 
-Done. The translations are automatically be added to `src/locales/<locale>.json`:
+Done. The translations are automatically added to `src/locales/<locale>.json`:
 
 ```
 {
